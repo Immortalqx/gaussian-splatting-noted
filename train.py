@@ -238,7 +238,7 @@ def training_report(tb_writer, iteration, Ll1, loss, l1_loss, elapsed, testing_i
 
 
 if __name__ == "__main__":
-    # 训练的主函数入口，设置一系列参数  Set up command line argument parser
+    # 训练的主函数入口，设置一系列参数
     # 创建了一个命令行参数解析器parser，用于解析传递给脚本的命令行参数
     # Set up command line argument parser
     parser = ArgumentParser(description="Training script parameters")

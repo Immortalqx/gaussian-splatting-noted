@@ -74,7 +74,7 @@ class GaussianModel:
         self._opacity = torch.empty(0)  # 3D高斯的不透明度，控制可见性
         self.max_radii2D = torch.empty(0)  # 在2D投影中，每个高斯的最大半径
         self.xyz_gradient_accum = torch.empty(0)  # 用于累积3D高斯中心位置的梯度
-        self.denom = torch.empty(0)  # 未明确用途的参数
+        self.denom = torch.empty(0)  # 没有使用的参数
         self.optimizer = None  # 优化器，用于调整上述参数以改进模型
         self.percent_dense = 0
         self.spatial_lr_scale = 0
@@ -165,7 +165,7 @@ class GaussianModel:
 
         # 计算点云中每个点到其最近的k个点的平均距离的平方，用于确定高斯的尺度参数
         dist2 = torch.clamp_min(distCUDA2(torch.from_numpy(np.asarray(pcd.points)).float().cuda()), 0.0000001)
-        scales = torch.log(torch.sqrt(dist2))[..., None].repeat(1, 3)
+        scales = torch.log(torch.sqrt(dist2))[..., None].repeat(1, 3)  # repeat，所以初始的都是高斯圆球
         # 初始化每个点的旋转参数为单位四元数（无旋转）
         rots = torch.zeros((fused_point_cloud.shape[0], 4), device="cuda")
         # 四元数的实部为1，表示无旋转
