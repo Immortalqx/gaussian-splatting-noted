@@ -244,22 +244,36 @@ class GaussianModel:
         return l
 
     def save_ply(self, path):
+        # 调用 mkdir_p 函数，创建路径的目录（如果目录不存在则创建）
         mkdir_p(os.path.dirname(path))
 
+        # 从 self._xyz 张量中分离数据，复制到 CPU，并转换为 numpy 数组
         xyz = self._xyz.detach().cpu().numpy()
+        # 创建一个与 xyz 形状相同的零数组，用于存储法线
         normals = np.zeros_like(xyz)
+        # 从 self._features_dc 张量中分离数据，转置第二维和第三维，扁平化，变为连续存储，并复制到 CPU，最后转换为 numpy 数组
         f_dc = self._features_dc.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
+        # 从 self._features_rest 张量中分离数据，转置第二维和第三维，扁平化，变为连续存储，并复制到 CPU，最后转换为 numpy 数组
         f_rest = self._features_rest.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
+        # 从 self._opacity 张量中分离数据，复制到 CPU，并转换为 numpy 数组
         opacities = self._opacity.detach().cpu().numpy()
+        # 从 self._scaling 张量中分离数据，复制到 CPU，并转换为 numpy 数组
         scale = self._scaling.detach().cpu().numpy()
+        # 从 self._rotation 张量中分离数据，复制到 CPU，并转换为 numpy 数组
         rotation = self._rotation.detach().cpu().numpy()
 
+        # 构造包含所有属性的列表的 dtype，每个属性的类型都是 float32（'f4'）
         dtype_full = [(attribute, 'f4') for attribute in self.construct_list_of_attributes()]
 
+        # 创建一个空数组 elements，长度与 xyz 数组相同，数据类型为 dtype_full
         elements = np.empty(xyz.shape[0], dtype=dtype_full)
+        # 将所有属性（xyz, normals, f_dc, f_rest, opacities, scale, rotation）沿第二维度拼接在一起
         attributes = np.concatenate((xyz, normals, f_dc, f_rest, opacities, scale, rotation), axis=1)
+        # 将 attributes 中的每一行转换为元组，并赋值给 elements 数组
         elements[:] = list(map(tuple, attributes))
+        # 使用 PlyElement.describe 函数描述 elements 数组，定义顶点元素
         el = PlyElement.describe(elements, 'vertex')
+        # 将 el 写入到指定的路径
         PlyData([el]).write(path)
 
     def reset_opacity(self):
