@@ -74,7 +74,7 @@ class GaussianModel:
         self._opacity = torch.empty(0)  # 3D高斯的不透明度，控制可见性
         self.max_radii2D = torch.empty(0)  # 在2D投影中，每个高斯的最大半径
         self.xyz_gradient_accum = torch.empty(0)  # 用于累积3D高斯中心位置的梯度
-        self.denom = torch.empty(0)  # 没有使用的参数
+        self.denom = torch.empty(0)  # 计数，统计一个高斯椭球在多少帧中进行了投影
         self.optimizer = None  # 优化器，用于调整上述参数以改进模型
         self.percent_dense = 0
         self.spatial_lr_scale = 0
